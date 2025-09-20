@@ -4,6 +4,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 const path = require("path");
+require("dotenv").config();
 
 // Swagger
 const swaggerUi = require("swagger-ui-express");
@@ -25,16 +26,19 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // Kết nối MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/session_auth");
+mongoose
+  .connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/session_auth")
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB error:", err));
 
 // Session config
 app.use(
   session({
-    secret: "mysecretkey",
+    secret: process.env.SESSION_SECRET || "mysecretkey",
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: "mongodb://127.0.0.1:27017/session_auth",
+      mongoUrl: process.env.MONGO_URI || "mongodb://127.0.0.1:27017/session_auth",
     }),
     cookie: {
       maxAge: 1000 * 60 * 60,
@@ -43,6 +47,12 @@ app.use(
     },
   })
 );
+
+// Middleware để biến `user` luôn có sẵn trong view
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null;
+  next();
+});
 
 // Swagger cấu hình
 const swaggerOptions = {
@@ -75,7 +85,8 @@ app.get("/login", (req, res) => {
 
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  // gọi API login
+  // TODO: gọi API login -> nếu thành công thì lưu session
+  req.session.user = { username }; // demo
   res.redirect("/");
 });
 
@@ -85,16 +96,21 @@ app.get("/register", (req, res) => {
 
 app.post("/register", async (req, res) => {
   const { username, password } = req.body;
-  // gọi API register
+  // TODO: gọi API register
   res.redirect("/login");
 });
 
 app.get("/logout", (req, res) => {
   req.session.destroy(() => {
-    res.clearCookie("auth");
+    res.clearCookie("connect.sid");
     res.redirect("/");
   });
 });
 
 // Start server
-app.listen(3000, () => console.log("Server running at http://localhost:3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`Swagger UI: http://localhost:${PORT}/api-docs`);
+}
+);
