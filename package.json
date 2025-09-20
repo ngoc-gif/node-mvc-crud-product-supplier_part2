@@ -1,0 +1,32 @@
+{
+  "name": "mvc-crud-product-supplier_part2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngoc-gif/node-mvc-crud-product-supplier_part2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ngoc-gif/node-mvc-crud-product-supplier_part2/issues"
+  },
+  "homepage": "https://github.com/ngoc-gif/node-mvc-crud-product-supplier_part2#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bootstrap": "^5.3.8",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "mongoose": "^8.18.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  }
+}
